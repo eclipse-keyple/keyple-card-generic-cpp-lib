@@ -1,5 +1,5 @@
 /**************************************************************************************************
- * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/                        *
+ * Copyright (c) 2022 Calypso Networks Association https://calypsonet.org/                        *
  *                                                                                                *
  * See the NOTICE file(s) distributed with this work for additional information regarding         *
  * copyright ownership.                                                                           *
@@ -38,7 +38,7 @@ ApduRequestAdapter& ApduRequestAdapter::setInfo(const std::string& info)
     return *this;
 }
 
-const std::vector<uint8_t>& ApduRequestAdapter::getApdu() const
+std::vector<uint8_t>& ApduRequestAdapter::getApdu()
 {
     return mApdu;
 }
