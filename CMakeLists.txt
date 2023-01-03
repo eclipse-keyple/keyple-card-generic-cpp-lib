@@ -19,8 +19,7 @@ SET(CMAKE_PROJECT_VERSION_PATCH "3")
 
 SET(CMAKE_PROJECT_VERSION "${CMAKE_PROJECT_VERSION_MAJOR}.
                            ${CMAKE_PROJECT_VERSION_MINOR}.
-                           ${CMAKE_PROJECT_VERSION_PATCH}.
-                           ${CMAKE_PROJECT_VERSION_TWEAK}")
+                           ${CMAKE_PROJECT_VERSION_PATCH}")
 
 SET(PACKAGE_NAME "keyple-card-generic-cpp-lib")
 SET(PACKAGE_VERSION ${CMAKE_PROJECT_VERSION})
