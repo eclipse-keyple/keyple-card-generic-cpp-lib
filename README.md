@@ -10,7 +10,7 @@ The full documentation, including the **user guide**, **download information** a
 
 ## API documentation
 
-API documentation & class diagram is available online: [eclipse.github.io/keyple-card-generic-cpp-lib](https://eclipse.github.io/keyple-card-generic-cpp-lib)
+API documentation & class diagram is available online: [docs.keyple.org/keyple-card-generic-cpp-lib](https://docs.keyple.org/keyple-card-generic-cpp-lib)
 
 ## Examples
 
