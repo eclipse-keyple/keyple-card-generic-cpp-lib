@@ -11,30 +11,44 @@
  * SPDX-License-Identifier: EPL-2.0                                           *
  ******************************************************************************/
 
-#include "keyple/card/generic/CardRequestAdapter.hpp"
+#include "keyple/card/generic/GenericCardSelectionExtensionAdapter.hpp"
+
+#include "keyple/card/generic/GenericCardAdapter.hpp"
+#include "keyple/card/generic/GenericCardSelectionRequestAdapter.hpp"
 
 namespace keyple {
 namespace card {
 namespace generic {
 
-CardRequestAdapter::CardRequestAdapter(
-    const std::vector<std::shared_ptr<ApduRequestSpi>>& apduRequests,
-    const bool stopOnUnsuccessfulStatusWord)
-: mApduRequests(apduRequests)
-, mStopOnUnsuccessfulStatusWord(stopOnUnsuccessfulStatusWord)
+const int GenericCardSelectionExtensionAdapter::DEFAULT_SUCCESSFUL_CODE
+    = 0x9000;
+
+GenericCardSelectionExtensionAdapter::GenericCardSelectionExtensionAdapter()
+: mSuccessfulSelectionStatusWords({0x9000})
 {
 }
 
-const std::vector<std::shared_ptr<ApduRequestSpi>>&
-CardRequestAdapter::getApduRequests() const
+std::shared_ptr<CardSelectionRequestSpi>
+GenericCardSelectionExtensionAdapter::getCardSelectionRequest() const
 {
-    return mApduRequests;
+    return std::make_shared<GenericCardSelectionRequestAdapter>(
+        mSuccessfulSelectionStatusWords);
 }
 
-bool
-CardRequestAdapter::stopOnUnsuccessfulStatusWord() const
+std::shared_ptr<SmartCardSpi>
+GenericCardSelectionExtensionAdapter::parse(
+    const std::shared_ptr<CardSelectionResponseApi> cardSelectionResponse) const
 {
-    return mStopOnUnsuccessfulStatusWord;
+    return std::make_shared<GenericCardAdapter>(cardSelectionResponse);
+}
+
+GenericCardSelectionExtension&
+GenericCardSelectionExtensionAdapter::addSuccessfulStatusWord(
+    const int statusWord)
+{
+    mSuccessfulSelectionStatusWords.push_back(statusWord);
+
+    return *this;
 }
 
 } /* namespace generic */

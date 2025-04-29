@@ -11,31 +11,44 @@
  * SPDX-License-Identifier: EPL-2.0                                           *
  ******************************************************************************/
 
-#include "keyple/card/generic/CardRequestAdapter.hpp"
+#pragma once
+
+#include "keypop/reader/selection/spi/CardSelectionExtension.hpp"
 
 namespace keyple {
 namespace card {
 namespace generic {
 
-CardRequestAdapter::CardRequestAdapter(
-    const std::vector<std::shared_ptr<ApduRequestSpi>>& apduRequests,
-    const bool stopOnUnsuccessfulStatusWord)
-: mApduRequests(apduRequests)
-, mStopOnUnsuccessfulStatusWord(stopOnUnsuccessfulStatusWord)
-{
-}
+using keypop::reader::selection::spi::CardSelectionExtension;
 
-const std::vector<std::shared_ptr<ApduRequestSpi>>&
-CardRequestAdapter::getApduRequests() const
-{
-    return mApduRequests;
-}
+/**
+ * Card specific CardSelectionExtension providing means to add successful status
+ * word.
+ *
+ * @since 3.0.0
+ */
+class GenericCardSelectionExtension : public CardSelectionExtension {
+public:
+    /**
+     *
+     */
+    virtual ~GenericCardSelectionExtension() = default;
 
-bool
-CardRequestAdapter::stopOnUnsuccessfulStatusWord() const
-{
-    return mStopOnUnsuccessfulStatusWord;
-}
+    /**
+     * Adds a status word to the list of those that should be considered
+     * successful for the Select Application APDU.
+     *
+     * <p>Note: initially, the list contains the standard successful status word
+     * 9000h.
+     *
+     * @param statusWord A positive int &le; {@code FFFFh}.
+     * @return The current instance.
+     * @since 2.0.0
+     */
+    virtual GenericCardSelectionExtension&
+    addSuccessfulStatusWord(const int statusWord)
+        = 0;
+};
 
 } /* namespace generic */
 } /* namespace card */
