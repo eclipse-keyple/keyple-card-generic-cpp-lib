@@ -11,36 +11,47 @@
  * SPDX-License-Identifier: EPL-2.0                                           *
  ******************************************************************************/
 
-#include "keyple/card/generic/GenericCardAdapter.hpp"
+#include "keyple/card/generic/GenericCardSelectionExtensionAdapter.hpp"
 
 #include <memory>
-#include <string>
-#include <vector>
+
+#include "keyple/card/generic/GenericCardAdapter.hpp"
+#include "keyple/card/generic/GenericCardSelectionRequestAdapter.hpp"
 
 namespace keyple {
 namespace card {
 namespace generic {
 
-GenericCardAdapter::GenericCardAdapter(
-    std::shared_ptr<CardSelectionResponseApi> cardSelectionResponse)
-: mSelectApplicationResponse(
-      cardSelectionResponse->getSelectApplicationResponse() != nullptr
-          ? cardSelectionResponse->getSelectApplicationResponse()->getApdu()
-          : std::vector<uint8_t>())
-, mPowerOnData(cardSelectionResponse->getPowerOnData())
+const int GenericCardSelectionExtensionAdapter::DEFAULT_SUCCESSFUL_CODE
+    = 0x9000;
+
+GenericCardSelectionExtensionAdapter::GenericCardSelectionExtensionAdapter()
+: mSuccessfulSelectionStatusWords({0x9000})
 {
 }
 
-const std::string&
-GenericCardAdapter::getPowerOnData() const
+std::unique_ptr<CardSelectionRequestSpi>
+GenericCardSelectionExtensionAdapter::getCardSelectionRequest()
 {
-    return mPowerOnData;
+    return std::unique_ptr<GenericCardSelectionRequestAdapter>(
+        new GenericCardSelectionRequestAdapter(
+            mSuccessfulSelectionStatusWords));
 }
 
-std::vector<uint8_t>
-GenericCardAdapter::getSelectApplicationResponse() const
+std::shared_ptr<SmartCardSpi>
+GenericCardSelectionExtensionAdapter::parse(
+    const std::shared_ptr<CardSelectionResponseApi>& cardSelectionResponse)
 {
-    return mSelectApplicationResponse;
+    return std::make_shared<GenericCardAdapter>(cardSelectionResponse);
+}
+
+GenericCardSelectionExtension&
+GenericCardSelectionExtensionAdapter::addSuccessfulStatusWord(
+    const int statusWord)
+{
+    mSuccessfulSelectionStatusWords.push_back(statusWord);
+
+    return *this;
 }
 
 } /* namespace generic */

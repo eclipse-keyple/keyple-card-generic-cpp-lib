@@ -11,31 +11,50 @@
  * SPDX-License-Identifier: EPL-2.0                                           *
  ******************************************************************************/
 
-#include "keyple/card/generic/CardRequestAdapter.hpp"
+#pragma once
+
+#include <string>
+
+#include "keyple/core/util/cpp/exception/Exception.hpp"
+#include "keyple/core/util/cpp/exception/RuntimeException.hpp"
 
 namespace keyple {
 namespace card {
 namespace generic {
 
-CardRequestAdapter::CardRequestAdapter(
-    const std::vector<std::shared_ptr<ApduRequestSpi>>& apduRequests,
-    const bool stopOnUnsuccessfulStatusWord)
-: mApduRequests(apduRequests)
-, mStopOnUnsuccessfulStatusWord(stopOnUnsuccessfulStatusWord)
-{
-}
+using keyple::core::util::cpp::exception::RuntimeException;
 
-const std::vector<std::shared_ptr<ApduRequestSpi>>&
-CardRequestAdapter::getApduRequests() const
-{
-    return mApduRequests;
-}
+/**
+ * Exception when an error or a communication failure with the card or the
+ * reader occurs.
+ *
+ * @since 2.0.0
+ */
+class TransactionException : public RuntimeException {
+public:
+    /**
+     * Builds a new exception.
+     *
+     * @param message Message to identify the exception context.
+     * @since 2.0.0
+     */
+    explicit TransactionException(const std::string& message)
+    : RuntimeException(message)
+    {
+    }
 
-bool
-CardRequestAdapter::stopOnUnsuccessfulStatusWord() const
-{
-    return mStopOnUnsuccessfulStatusWord;
-}
+    /**
+     * Builds a new exception with the originating exception.
+     *
+     * @param message Message to identify the exception context.
+     * @param cause The cause
+     * @since 2.0.0
+     */
+    TransactionException(const std::string& message, const Exception& cause)
+    : RuntimeException(message, cause)
+    {
+    }
+};
 
 } /* namespace generic */
 } /* namespace card */

@@ -11,31 +11,34 @@
  * SPDX-License-Identifier: EPL-2.0                                           *
  ******************************************************************************/
 
-#include "keyple/card/generic/CardRequestAdapter.hpp"
+#pragma once
 
 namespace keyple {
 namespace card {
 namespace generic {
 
-CardRequestAdapter::CardRequestAdapter(
-    const std::vector<std::shared_ptr<ApduRequestSpi>>& apduRequests,
-    const bool stopOnUnsuccessfulStatusWord)
-: mApduRequests(apduRequests)
-, mStopOnUnsuccessfulStatusWord(stopOnUnsuccessfulStatusWord)
-{
-}
+/**
+ * Policy for managing the physical channel after a card request is executed.
+ *
+ * @since 3.0.0
+ */
+enum class ChannelControl {
+    /**
+     * Leaves the physical channel open.
+     *
+     * @since 3.0.0
+     */
+    KEEP_OPEN,
 
-const std::vector<std::shared_ptr<ApduRequestSpi>>&
-CardRequestAdapter::getApduRequests() const
-{
-    return mApduRequests;
-}
-
-bool
-CardRequestAdapter::stopOnUnsuccessfulStatusWord() const
-{
-    return mStopOnUnsuccessfulStatusWord;
-}
+    /**
+     * Terminates communication with the card.<br>
+     * The physical channel closes instantly or a card removal sequence is
+     * initiated depending on the observation mode.
+     *
+     * @since 3.0.0
+     */
+    CLOSE_AFTER
+};
 
 } /* namespace generic */
 } /* namespace card */
