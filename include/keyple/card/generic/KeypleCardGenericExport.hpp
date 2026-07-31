@@ -11,32 +11,14 @@
  * SPDX-License-Identifier: EPL-2.0                                           *
  ******************************************************************************/
 
-#include "keyple/card/generic/CardRequestAdapter.hpp"
+#pragma once
 
-namespace keyple {
-namespace card {
-namespace generic {
-
-CardRequestAdapter::CardRequestAdapter(
-    const std::vector<std::shared_ptr<ApduRequestSpi>>& apduRequests,
-    const bool stopOnUnsuccessfulStatusWord)
-: mApduRequests(apduRequests)
-, mStopOnUnsuccessfulStatusWord(stopOnUnsuccessfulStatusWord)
-{
-}
-
-const std::vector<std::shared_ptr<ApduRequestSpi>>&
-CardRequestAdapter::getApduRequests() const
-{
-    return mApduRequests;
-}
-
-bool
-CardRequestAdapter::stopOnUnsuccessfulStatusWord() const
-{
-    return mStopOnUnsuccessfulStatusWord;
-}
-
-} /* namespace generic */
-} /* namespace card */
-} /* namespace keyple */
+#if defined(WIN32)
+#if defined(KEYPLECARDGENERIC_EXPORT)
+#define KEYPLECARDGENERIC_API __declspec(dllexport)
+#else
+#define KEYPLECARDGENERIC_API __declspec(dllimport)
+#endif
+#else
+#define KEYPLECARDGENERIC_API
+#endif
