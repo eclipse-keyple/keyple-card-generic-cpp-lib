@@ -14,8 +14,10 @@
 #pragma once
 
 #include <memory>
+#include <ostream>
 #include <vector>
 
+#include "keyple/card/generic/KeypleCardGenericExport.hpp"
 #include "keypop/card/spi/ApduRequestSpi.hpp"
 #include "keypop/card/spi/CardRequestSpi.hpp"
 
@@ -32,7 +34,7 @@ using keypop::card::spi::CardRequestSpi;
  *
  * @since 2.0.0
  */
-class CardRequestAdapter final : public CardRequestSpi {
+class KEYPLECARDGENERIC_API CardRequestAdapter final : public CardRequestSpi {
 public:
     /**
      * Builds a card request with a list of {@link ApduRequestSpi } and the flag
@@ -65,6 +67,22 @@ public:
      * @since 2.0.0
      */
     bool stopOnUnsuccessfulStatusWord() const override;
+
+    /**
+     * {@inheritDoc}
+     *
+     * @since 4.0.0
+     */
+    friend std::ostream&
+    operator<<(std::ostream& os, const CardRequestAdapter& cra);
+
+    /**
+     * {@inheritDoc}
+     *
+     * @since 4.0.0
+     */
+    friend std::ostream&
+    operator<<(std::ostream& os, const std::shared_ptr<CardRequestAdapter> cra);
 
 private:
     /**

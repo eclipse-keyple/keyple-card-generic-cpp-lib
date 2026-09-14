@@ -18,6 +18,7 @@
 #include <string>
 #include <vector>
 
+#include "keyple/card/generic/KeypleCardGenericExport.hpp"
 #include "keypop/card/spi/ApduRequestSpi.hpp"
 
 namespace keyple {
@@ -32,7 +33,7 @@ using keypop::card::spi::ApduRequestSpi;
  *
  * @since 2.0.0
  */
-class ApduRequestAdapter final : public ApduRequestSpi {
+class KEYPLECARDGENERIC_API ApduRequestAdapter final : public ApduRequestSpi {
 public:
     /**
      * Builds an APDU request from a raw byte buffer.

@@ -13,9 +13,11 @@
 
 #include "keyple/card/generic/GenericExtensionService.hpp"
 
-#include "keyple/card/generic/CardTransactionManagerAdapter.hpp"
+#include <memory>
+#include <string>
+
+#include "keyple/card/generic/GenericCardApiFactoryAdapter.hpp"
 #include "keyple/card/generic/GenericCardResourceProfileExtensionAdapter.hpp"
-#include "keyple/card/generic/GenericCardSelectionExtensionAdapter.hpp"
 #include "keyple/core/common/CommonApiProperties.hpp"
 #include "keypop/card/CardApiProperties.hpp"
 #include "keypop/reader/ReaderApiProperties.hpp"
@@ -45,17 +47,10 @@ GenericExtensionService::getInstance()
     return mInstance;
 }
 
-std::shared_ptr<GenericCardSelectionExtension>
-GenericExtensionService::createGenericCardSelectionExtension()
+std::shared_ptr<GenericCardApiFactory>
+GenericExtensionService::getGenericCardApiFactory()
 {
-    return std::make_shared<GenericCardSelectionExtensionAdapter>();
-}
-
-std::shared_ptr<CardTransactionManager>
-GenericExtensionService::createCardTransaction(
-    std::shared_ptr<CardReader> reader, std::shared_ptr<SmartCard> card)
-{
-    return std::make_shared<CardTransactionManagerAdapter>(reader, card);
+    return std::make_shared<GenericCardApiFactoryAdapter>();
 }
 
 std::shared_ptr<CardResourceProfileExtension>

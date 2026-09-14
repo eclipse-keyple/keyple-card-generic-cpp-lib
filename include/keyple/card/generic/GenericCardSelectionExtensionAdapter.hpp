@@ -16,11 +16,12 @@
 #include <memory>
 #include <vector>
 
-#include "keyple/card/generic/GenericCardSelectionExtension.hpp"
+#include "keyple/card/generic/KeypleCardGenericExport.hpp"
 #include "keypop/card/CardSelectionResponseApi.hpp"
 #include "keypop/card/spi/CardSelectionExtensionSpi.hpp"
 #include "keypop/card/spi/CardSelectionRequestSpi.hpp"
 #include "keypop/card/spi/SmartCardSpi.hpp"
+#include "keypop/genericcard/GenericCardSelectionExtension.hpp"
 
 namespace keyple {
 namespace card {
@@ -30,13 +31,14 @@ using keypop::card::CardSelectionResponseApi;
 using keypop::card::spi::CardSelectionExtensionSpi;
 using keypop::card::spi::CardSelectionRequestSpi;
 using keypop::card::spi::SmartCardSpi;
+using keypop::genericcard::GenericCardSelectionExtension;
 
 /**
  * Implementation of GenericCardSelectionExtension.
  *
  * @since 2.0.0
  */
-class GenericCardSelectionExtensionAdapter
+class KEYPLECARDGENERIC_API GenericCardSelectionExtensionAdapter
 : public GenericCardSelectionExtension,
   public CardSelectionExtensionSpi {
 public:
