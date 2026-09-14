@@ -1,4 +1,4 @@
 | Version | Documents |
 |:---:|---|
-| 2.0.4-SNAPSHOT | [API documentation](2.0.4-SNAPSHOT) |
+| **latest-stable (3.1.2)** | [API documentation](latest-stable) |
 | 2.0.2 | [API documentation](2.0.2) |
