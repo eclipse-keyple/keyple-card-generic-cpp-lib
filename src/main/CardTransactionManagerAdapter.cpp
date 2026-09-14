@@ -1,71 +1,87 @@
-/**************************************************************************************************
- * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/                        *
- *                                                                                                *
- * See the NOTICE file(s) distributed with this work for additional information regarding         *
- * copyright ownership.                                                                           *
- *                                                                                                *
- * This program and the accompanying materials are made available under the terms of the Eclipse  *
- * Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0                  *
- *                                                                                                *
- * SPDX-License-Identifier: EPL-2.0                                                               *
- **************************************************************************************************/
+/******************************************************************************
+ * Copyright (c) 2025 Calypso Networks Association https://calypsonet.org/    *
+ *                                                                            *
+ * See the NOTICE file(s) distributed with this work for additional           *
+ * information regarding copyright ownership.                                 *
+ *                                                                            *
+ * This program and the accompanying materials are made available under the   *
+ * terms of the Eclipse Public License 2.0 which is available at              *
+ * http://www.eclipse.org/legal/epl-2.0                                       *
+ *                                                                            *
+ * SPDX-License-Identifier: EPL-2.0                                           *
+ ******************************************************************************/
 
-#include "CardTransactionManagerAdapter.h"
+#include "keyple/card/generic/CardTransactionManagerAdapter.hpp"
 
-/* Keyple Core Util */
-#include "ApduUtil.h"
-#include "ByteArrayUtil.h"
-#include "KeypleAssert.h"
+#include <memory>
+#include <string>
+#include <vector>
 
-/* Keyple Card Generic */
-#include "ApduRequestAdapter.h"
-#include "TransactionException.h"
-
-/* Calypsonet Terminal Card */
-#include "CardBrokenCommunicationException.h"
-#include "CardRequestAdapter.h"
-#include "CardResponseApi.h"
-#include "ProxyReaderApi.h"
-#include "ReaderBrokenCommunicationException.h"
-#include "UnexpectedStatusWordException.h"
+#include "keyple/card/generic/ApduRequestAdapter.hpp"
+#include "keyple/card/generic/CardRequestAdapter.hpp"
+#include "keyple/card/generic/ChannelControl.hpp"
+#include "keyple/card/generic/TransactionException.hpp"
+#include "keyple/core/util/ApduUtil.hpp"
+#include "keyple/core/util/ByteArrayUtil.hpp"
+#include "keyple/core/util/HexUtil.hpp"
+#include "keyple/core/util/KeypleAssert.hpp"
+#include "keyple/core/util/cpp/exception/Exception.hpp"
+#include "keypop/card/CardBrokenCommunicationException.hpp"
+#include "keypop/card/CardResponseApi.hpp"
+#include "keypop/card/ProxyReaderApi.hpp"
+#include "keypop/card/ReaderBrokenCommunicationException.hpp"
+#include "keypop/card/UnexpectedStatusWordException.hpp"
 
 namespace keyple {
 namespace card {
 namespace generic {
 
-using namespace calypsonet::terminal::card;
-using namespace keyple::core::util;
+using keyple::core::util::ApduUtil;
+using keyple::core::util::Assert;
+using keyple::core::util::ByteArrayUtil;
+using keyple::core::util::HexUtil;
+using keyple::core::util::cpp::exception::Exception;
+using keypop::card::CardBrokenCommunicationException;
+using keypop::card::CardResponseApi;
+using keypop::card::ProxyReaderApi;
+using keypop::card::ReaderBrokenCommunicationException;
+using keypop::card::UnexpectedStatusWordException;
 
 const std::string CardTransactionManagerAdapter::APDU_COMMAND = "apduCommand";
 
-CardTransactionManagerAdapter::CardTransactionManagerAdapter(std::shared_ptr<CardReader> reader,
-                                                             const std::shared_ptr<SmartCard> card)
-: mReader(reader), mChannelControl(ChannelControl::KEEP_OPEN)
+CardTransactionManagerAdapter::CardTransactionManagerAdapter(
+    std::shared_ptr<CardReader> reader, const std::shared_ptr<SmartCard> card)
+: mReader(reader)
 {
     Assert::getInstance().notNull(reader, "reader").notNull(card, "card");
 }
 
-CardTransactionManager& CardTransactionManagerAdapter::prepareApdu(const std::string& apduCommand)
+CardTransactionManager&
+CardTransactionManagerAdapter::prepareApdu(const std::string& apduCommand)
 {
-    Assert::getInstance().notEmpty(apduCommand, APDU_COMMAND)
-                         .isTrue(ByteArrayUtil::isValidHexString(apduCommand), APDU_COMMAND);
+    Assert::getInstance()
+        .notEmpty(apduCommand, APDU_COMMAND)
+        .isTrue(HexUtil::isValid(apduCommand), APDU_COMMAND);
 
-    prepareApdu(ByteArrayUtil::fromHex(apduCommand));
+    prepareApdu(HexUtil::toByteArray(apduCommand));
 
     return *this;
 }
 
-CardTransactionManager& CardTransactionManagerAdapter::prepareApdu(
+CardTransactionManager&
+CardTransactionManagerAdapter::prepareApdu(
     const std::vector<uint8_t>& apduCommand)
 {
-    Assert::getInstance().isInRange(static_cast<int>(apduCommand.size()), 5, 251, "length");
+    Assert::getInstance().isInRange(
+        static_cast<int>(apduCommand.size()), 5, 251, "length");
 
     mApduRequests.push_back(std::make_shared<ApduRequestAdapter>(apduCommand));
 
     return *this;
 }
 
-CardTransactionManager& CardTransactionManagerAdapter::prepareApdu(
+CardTransactionManager&
+CardTransactionManagerAdapter::prepareApdu(
     const uint8_t cla,
     const uint8_t ins,
     const uint8_t p1,
@@ -74,12 +90,14 @@ CardTransactionManager& CardTransactionManagerAdapter::prepareApdu(
     const uint8_t le)
 {
     mApduRequests.push_back(
-        std::make_shared<ApduRequestAdapter>(ApduUtil::build(cla, ins, p1, p2, dataIn, le)));
+        std::make_shared<ApduRequestAdapter>(
+            ApduUtil::build(cla, ins, p1, p2, dataIn, le)));
 
     return *this;
 }
 
-CardTransactionManager& CardTransactionManagerAdapter::prepareApdu(
+CardTransactionManager&
+CardTransactionManagerAdapter::prepareApdu(
     const uint8_t cla,
     const uint8_t ins,
     const uint8_t p1,
@@ -87,19 +105,15 @@ CardTransactionManager& CardTransactionManagerAdapter::prepareApdu(
     const std::vector<uint8_t>& dataIn)
 {
     mApduRequests.push_back(
-        std::make_shared<ApduRequestAdapter>(ApduUtil::build(cla, ins, p1, p2, dataIn)));
+        std::make_shared<ApduRequestAdapter>(
+            ApduUtil::build(cla, ins, p1, p2, dataIn)));
 
     return *this;
 }
 
-CardTransactionManager& CardTransactionManagerAdapter::prepareReleaseChannel()
-{
-    mChannelControl = ChannelControl::CLOSE_AFTER;
-
-    return *this;
-}
-
-const std::vector<std::vector<uint8_t>> CardTransactionManagerAdapter::processApdusToByteArrays()
+const std::vector<std::vector<uint8_t>>
+CardTransactionManagerAdapter::processApdusToByteArrays(
+    const ChannelControl channelControl)
 {
     std::shared_ptr<CardResponseApi> cardResponse;
     std::vector<std::vector<uint8_t>> apduResponsesBytes;
@@ -109,20 +123,25 @@ const std::vector<std::vector<uint8_t>> CardTransactionManagerAdapter::processAp
     }
 
     try {
-        cardResponse =
-            std::dynamic_pointer_cast<ProxyReaderApi>(mReader)
-                ->transmitCardRequest(
-                    std::make_shared<CardRequestAdapter>(mApduRequests, false), mChannelControl);
+        auto cardRequest
+            = std::make_shared<CardRequestAdapter>(mApduRequests, false);
+        auto control = channelControl == ChannelControl::CLOSE_AFTER
+                           ? keypop::card::ChannelControl::CLOSE_AFTER
+                           : keypop::card::ChannelControl::KEEP_OPEN;
+
+        cardResponse = std::dynamic_pointer_cast<ProxyReaderApi>(mReader)
+                           ->transmitCardRequest(cardRequest, control);
 
     } catch (const ReaderBrokenCommunicationException& e) {
-        throw TransactionException("Reader communication error.",
-                                   std::make_shared<ReaderBrokenCommunicationException>(e));
+        throw TransactionException(
+            "Reader communication error", Exception(e.getMessage()));
+
     } catch (const CardBrokenCommunicationException& e) {
-        throw TransactionException("Card communication error.",
-                                   std::make_shared<CardBrokenCommunicationException>(e));
+        throw TransactionException(
+            "Card communication error", Exception(e.getMessage()));
+
     } catch (const UnexpectedStatusWordException& e) {
-        throw TransactionException("Apdu error.",
-                                   std::make_shared<UnexpectedStatusWordException>(e));
+        throw TransactionException("Apdu error", Exception(e.getMessage()));
     }
 
     mApduRequests.clear();
@@ -134,18 +153,21 @@ const std::vector<std::vector<uint8_t>> CardTransactionManagerAdapter::processAp
     return apduResponsesBytes;
 }
 
-const std::vector<std::string> CardTransactionManagerAdapter::processApdusToHexStrings()
+const std::vector<std::string>
+CardTransactionManagerAdapter::processApdusToHexStrings(
+    const ChannelControl channelControl)
 {
-    const std::vector<std::vector<uint8_t>> apduResponsesBytes = processApdusToByteArrays();
     std::vector<std::string> apduResponsesHex;
+    const std::vector<std::vector<uint8_t>> apduResponsesBytes
+        = processApdusToByteArrays(channelControl);
 
     for (const auto& bytes : apduResponsesBytes) {
-        apduResponsesHex.push_back(ByteArrayUtil::toHex(bytes));
+        apduResponsesHex.push_back(HexUtil::toHex(bytes));
     }
 
     return apduResponsesHex;
 }
 
-}
-}
-}
+} /* namespace generic */
+} /* namespace card */
+} /* namespace keyple */
