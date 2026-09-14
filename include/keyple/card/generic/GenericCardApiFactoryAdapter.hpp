@@ -15,6 +15,7 @@
 
 #include <memory>
 
+#include "keyple/card/generic/KeypleCardGenericExport.hpp"
 #include "keypop/genericcard/CardTransactionManager.hpp"
 #include "keypop/genericcard/GenericCardApiFactory.hpp"
 #include "keypop/genericcard/GenericCardSelectionExtension.hpp"
@@ -36,7 +37,8 @@ using keypop::reader::selection::spi::SmartCard;
  *
  * @since 4.0.0
  */
-class GenericCardApiFactoryAdapter final : public GenericCardApiFactory {
+class KEYPLECARDGENERIC_API GenericCardApiFactoryAdapter final
+: public GenericCardApiFactory {
 public:
     /**
      * {@inheritDoc}
