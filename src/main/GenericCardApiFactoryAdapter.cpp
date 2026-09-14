@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright (c) 2025 Calypso Networks Association https://calypsonet.org/    *
+ * Copyright (c) 2026 Calypso Networks Association https://calypsonet.org/    *
  *                                                                            *
  * See the NOTICE file(s) distributed with this work for additional           *
  * information regarding copyright ownership.                                 *
@@ -11,44 +11,32 @@
  * SPDX-License-Identifier: EPL-2.0                                           *
  ******************************************************************************/
 
-#pragma once
+#include "keyple/card/generic/GenericCardApiFactoryAdapter.hpp"
 
-#include "keypop/reader/selection/spi/CardSelectionExtension.hpp"
+#include <memory>
+
+#include "keyple/card/generic/CardTransactionManagerAdapter.hpp"
+#include "keyple/card/generic/GenericCardSelectionExtensionAdapter.hpp"
 
 namespace keyple {
 namespace card {
 namespace generic {
 
-using keypop::reader::selection::spi::CardSelectionExtension;
+std::unique_ptr<GenericCardSelectionExtension>
+GenericCardApiFactoryAdapter::createGenericCardSelectionExtension()
+{
+    return std::unique_ptr<GenericCardSelectionExtensionAdapter>(
+        new GenericCardSelectionExtensionAdapter());
+}
 
-/**
- * Card specific CardSelectionExtension providing means to add successful status
- * word.
- *
- * @since 3.0.0
- */
-class GenericCardSelectionExtension : public CardSelectionExtension {
-public:
-    /**
-     *
-     */
-    virtual ~GenericCardSelectionExtension() = default;
-
-    /**
-     * Adds a status word to the list of those that should be considered
-     * successful for the Select Application APDU.
-     *
-     * <p>Note: initially, the list contains the standard successful status word
-     * 9000h.
-     *
-     * @param statusWord A positive int &le; {@code FFFFh}.
-     * @return The current instance.
-     * @since 2.0.0
-     */
-    virtual GenericCardSelectionExtension&
-    addSuccessfulStatusWord(const int statusWord)
-        = 0;
-};
+std::unique_ptr<CardTransactionManager>
+GenericCardApiFactoryAdapter::createCardTransaction(
+    const std::shared_ptr<CardReader>& cardReader,
+    const std::shared_ptr<SmartCard>& card)
+{
+    return std::unique_ptr<CardTransactionManagerAdapter>(
+        new CardTransactionManagerAdapter(cardReader, card));
+}
 
 } /* namespace generic */
 } /* namespace card */

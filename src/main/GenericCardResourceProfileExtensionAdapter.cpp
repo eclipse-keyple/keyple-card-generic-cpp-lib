@@ -13,6 +13,8 @@
 
 #include "keyple/card/generic/GenericCardResourceProfileExtensionAdapter.hpp"
 
+#include <memory>
+
 #include "keyple/core/util/KeypleAssert.hpp"
 #include "keyple/core/util/cpp/exception/Exception.hpp"
 #include "keypop/reader/selection/CardSelectionManager.hpp"
@@ -35,8 +37,8 @@ GenericCardResourceProfileExtensionAdapter::
         std::shared_ptr<GenericCardSelectionExtension>
             genericCardSelectionExtension)
 : mGenericCardSelection(
-    std::dynamic_pointer_cast<GenericCardSelectionExtensionAdapter>(
-        genericCardSelectionExtension))
+      std::dynamic_pointer_cast<GenericCardSelectionExtensionAdapter>(
+          genericCardSelectionExtension))
 , mCardSelector(cardSelector)
 {
     Assert::getInstance().notNull(
@@ -62,7 +64,7 @@ GenericCardResourceProfileExtensionAdapter::matches(
         genericCardSelectionResult
             = genericCardSelectionManager->processCardSelectionScenario(reader);
     } catch (const Exception& e) {
-        mLogger->error("Card selection failed: %\n", e.getMessage(), e);
+        mLogger->error("Failed to select card [error=%]\n", e.getMessage());
     }
 
     if (genericCardSelectionResult != nullptr) {

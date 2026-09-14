@@ -13,6 +13,11 @@
 
 #include "keyple/card/generic/CardRequestAdapter.hpp"
 
+#include <memory>
+#include <vector>
+
+#include "keyple/card/generic/ApduRequestAdapter.hpp"
+
 namespace keyple {
 namespace card {
 namespace generic {
@@ -35,6 +40,35 @@ bool
 CardRequestAdapter::stopOnUnsuccessfulStatusWord() const
 {
     return mStopOnUnsuccessfulStatusWord;
+}
+
+std::ostream&
+operator<<(std::ostream& os, const CardRequestAdapter& cra)
+{
+    os << "CARD_REQUEST_ADAPTER: {"
+       << "APDU_REQUESTS = [";
+
+    for (size_t i = 0; i < cra.mApduRequests.size(); i++) {
+        if (i > 0) {
+            os << ", ";
+        }
+        os << std::dynamic_pointer_cast<ApduRequestAdapter>(
+            cra.mApduRequests[i]);
+    }
+
+    os << "], "
+       << "STOP_ON_UNSUCCESSFUL_STATUS_WORD = "
+       << cra.mStopOnUnsuccessfulStatusWord << "}";
+
+    return os;
+}
+
+std::ostream&
+operator<<(std::ostream& os, const std::shared_ptr<CardRequestAdapter> cra)
+{
+    os << *cra.get();
+
+    return os;
 }
 
 } /* namespace generic */

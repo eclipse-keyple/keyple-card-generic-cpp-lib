@@ -19,8 +19,6 @@
 
 #include "keyple/card/generic/ApduRequestAdapter.hpp"
 #include "keyple/card/generic/CardRequestAdapter.hpp"
-#include "keyple/card/generic/ChannelControl.hpp"
-#include "keyple/card/generic/TransactionException.hpp"
 #include "keyple/core/util/ApduUtil.hpp"
 #include "keyple/core/util/ByteArrayUtil.hpp"
 #include "keyple/core/util/HexUtil.hpp"
@@ -28,9 +26,13 @@
 #include "keyple/core/util/cpp/exception/Exception.hpp"
 #include "keypop/card/CardBrokenCommunicationException.hpp"
 #include "keypop/card/CardResponseApi.hpp"
+#include "keypop/card/ChannelControl.hpp"
 #include "keypop/card/ProxyReaderApi.hpp"
 #include "keypop/card/ReaderBrokenCommunicationException.hpp"
 #include "keypop/card/UnexpectedStatusWordException.hpp"
+#include "keypop/reader/CardCommunicationException.hpp"
+#include "keypop/reader/InvalidCardResponseException.hpp"
+#include "keypop/reader/ReaderCommunicationException.hpp"
 
 namespace keyple {
 namespace card {
@@ -46,6 +48,9 @@ using keypop::card::CardResponseApi;
 using keypop::card::ProxyReaderApi;
 using keypop::card::ReaderBrokenCommunicationException;
 using keypop::card::UnexpectedStatusWordException;
+using keypop::reader::CardCommunicationException;
+using keypop::reader::InvalidCardResponseException;
+using keypop::reader::ReaderCommunicationException;
 
 const std::string CardTransactionManagerAdapter::APDU_COMMAND = "apduCommand";
 
@@ -73,7 +78,7 @@ CardTransactionManagerAdapter::prepareApdu(
     const std::vector<uint8_t>& apduCommand)
 {
     Assert::getInstance().isInRange(
-        static_cast<int>(apduCommand.size()), 5, 251, "length");
+        static_cast<int>(apduCommand.size()), 5, 261, "length");
 
     mApduRequests.push_back(std::make_shared<ApduRequestAdapter>(apduCommand));
 
@@ -111,16 +116,17 @@ CardTransactionManagerAdapter::prepareApdu(
     return *this;
 }
 
-const std::vector<std::vector<uint8_t>>
-CardTransactionManagerAdapter::processApdusToByteArrays(
+CardTransactionManager&
+CardTransactionManagerAdapter::processCommands(
     const ChannelControl channelControl)
 {
-    std::shared_ptr<CardResponseApi> cardResponse;
-    std::vector<std::vector<uint8_t>> apduResponsesBytes;
+    mApduResponses.clear();
 
     if (mApduRequests.empty()) {
-        return apduResponsesBytes;
+        return *this;
     }
+
+    std::shared_ptr<CardResponseApi> cardResponse;
 
     try {
         auto cardRequest
@@ -133,35 +139,39 @@ CardTransactionManagerAdapter::processApdusToByteArrays(
                            ->transmitCardRequest(cardRequest, control);
 
     } catch (const ReaderBrokenCommunicationException& e) {
-        throw TransactionException(
-            "Reader communication error", Exception(e.getMessage()));
+        mApduRequests.clear();
+        throw ReaderCommunicationException("Reader communication error", e);
 
     } catch (const CardBrokenCommunicationException& e) {
-        throw TransactionException(
-            "Card communication error", Exception(e.getMessage()));
+        mApduRequests.clear();
+        throw CardCommunicationException("Card communication error", e);
 
     } catch (const UnexpectedStatusWordException& e) {
-        throw TransactionException("Apdu error", Exception(e.getMessage()));
+        mApduRequests.clear();
+        throw InvalidCardResponseException("APDU error", e);
     }
 
     mApduRequests.clear();
 
     for (const auto& apduResponse : cardResponse->getApduResponses()) {
-        apduResponsesBytes.push_back(apduResponse->getApdu());
+        mApduResponses.push_back(apduResponse->getApdu());
     }
 
-    return apduResponsesBytes;
+    return *this;
+}
+
+const std::vector<std::vector<uint8_t>>
+CardTransactionManagerAdapter::getResponsesAsByteArrays()
+{
+    return mApduResponses;
 }
 
 const std::vector<std::string>
-CardTransactionManagerAdapter::processApdusToHexStrings(
-    const ChannelControl channelControl)
+CardTransactionManagerAdapter::getResponsesAsHexStrings()
 {
     std::vector<std::string> apduResponsesHex;
-    const std::vector<std::vector<uint8_t>> apduResponsesBytes
-        = processApdusToByteArrays(channelControl);
 
-    for (const auto& bytes : apduResponsesBytes) {
+    for (const auto& bytes : mApduResponses) {
         apduResponsesHex.push_back(HexUtil::toHex(bytes));
     }
 

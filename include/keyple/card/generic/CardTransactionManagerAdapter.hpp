@@ -17,10 +17,10 @@
 #include <string>
 #include <vector>
 
-#include "keyple/card/generic/CardTransactionManager.hpp"
-#include "keyple/card/generic/ChannelControl.hpp"
 #include "keypop/card/spi/ApduRequestSpi.hpp"
+#include "keypop/genericcard/CardTransactionManager.hpp"
 #include "keypop/reader/CardReader.hpp"
+#include "keypop/reader/ChannelControl.hpp"
 #include "keypop/reader/selection/spi/SmartCard.hpp"
 
 namespace keyple {
@@ -28,7 +28,9 @@ namespace card {
 namespace generic {
 
 using keypop::card::spi::ApduRequestSpi;
+using keypop::genericcard::CardTransactionManager;
 using keypop::reader::CardReader;
+using keypop::reader::ChannelControl;
 using keypop::reader::selection::spi::SmartCard;
 
 /**
@@ -100,18 +102,24 @@ public:
     /**
      * {@inheritDoc}
      *
-     * @since 2.0.0
+     * @since 3.2.0
      */
-    const std::vector<std::vector<uint8_t>>
-    processApdusToByteArrays(const ChannelControl channelControl) override;
+    CardTransactionManager&
+    processCommands(const ChannelControl channelControl) override;
 
     /**
      * {@inheritDoc}
      *
-     * @since 2.0.0
+     * @since 3.2.0
      */
-    const std::vector<std::string>
-    processApdusToHexStrings(ChannelControl channelControl) override;
+    const std::vector<std::vector<uint8_t>> getResponsesAsByteArrays() override;
+
+    /**
+     * {@inheritDoc}
+     *
+     * @since 3.2.0
+     */
+    const std::vector<std::string> getResponsesAsHexStrings() override;
 
 private:
     /**
@@ -123,6 +131,11 @@ private:
      *
      */
     std::vector<std::shared_ptr<ApduRequestSpi>> mApduRequests;
+
+    /**
+     *
+     */
+    std::vector<std::vector<uint8_t>> mApduResponses;
 };
 
 } /* namespace generic */

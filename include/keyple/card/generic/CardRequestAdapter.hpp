@@ -14,6 +14,7 @@
 #pragma once
 
 #include <memory>
+#include <ostream>
 #include <vector>
 
 #include "keypop/card/spi/ApduRequestSpi.hpp"
@@ -65,6 +66,22 @@ public:
      * @since 2.0.0
      */
     bool stopOnUnsuccessfulStatusWord() const override;
+
+    /**
+     * {@inheritDoc}
+     *
+     * @since 4.0.0
+     */
+    friend std::ostream&
+    operator<<(std::ostream& os, const CardRequestAdapter& cra);
+
+    /**
+     * {@inheritDoc}
+     *
+     * @since 4.0.0
+     */
+    friend std::ostream&
+    operator<<(std::ostream& os, const std::shared_ptr<CardRequestAdapter> cra);
 
 private:
     /**

@@ -15,11 +15,11 @@
 
 #include <memory>
 
-#include "keyple/card/generic/GenericCardSelectionExtension.hpp"
 #include "keyple/card/generic/GenericCardSelectionExtensionAdapter.hpp"
 #include "keyple/core/service/resource/spi/CardResourceProfileExtension.hpp"
 #include "keyple/core/util/cpp/Logger.hpp"
 #include "keyple/core/util/cpp/LoggerFactory.hpp"
+#include "keypop/genericcard/GenericCardSelectionExtension.hpp"
 #include "keypop/reader/CardReader.hpp"
 #include "keypop/reader/ReaderApiFactory.hpp"
 #include "keypop/reader/selection/IsoCardSelector.hpp"
@@ -32,13 +32,14 @@ namespace generic {
 using keyple::core::service::resource::spi::CardResourceProfileExtension;
 using keyple::core::util::cpp::Logger;
 using keyple::core::util::cpp::LoggerFactory;
+using keypop::genericcard::GenericCardSelectionExtension;
 using keypop::reader::CardReader;
 using keypop::reader::ReaderApiFactory;
 using keypop::reader::selection::IsoCardSelector;
 using keypop::reader::selection::spi::SmartCard;
 
 /**
- * Implementation of CardResourceProfileExtension that provides the capability
+ * Implementation of CardResourceProfileExtension that provides the ability
  * to filter cards of any type.
  *
  * @since 2.0.0
