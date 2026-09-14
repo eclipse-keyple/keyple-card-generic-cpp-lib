@@ -17,6 +17,7 @@
 #include <vector>
 
 #include "keyple/card/generic/GenericCardSelectionExtension.hpp"
+#include "keyple/card/generic/KeypleCardGenericExport.hpp"
 #include "keypop/card/CardSelectionResponseApi.hpp"
 #include "keypop/card/spi/CardSelectionExtensionSpi.hpp"
 #include "keypop/card/spi/CardSelectionRequestSpi.hpp"
@@ -36,7 +37,7 @@ using keypop::card::spi::SmartCardSpi;
  *
  * @since 2.0.0
  */
-class GenericCardSelectionExtensionAdapter
+class KEYPLECARDGENERIC_API GenericCardSelectionExtensionAdapter
 : public GenericCardSelectionExtension,
   public CardSelectionExtensionSpi {
 public:

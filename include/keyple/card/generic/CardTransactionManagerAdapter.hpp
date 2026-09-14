@@ -19,6 +19,7 @@
 
 #include "keyple/card/generic/CardTransactionManager.hpp"
 #include "keyple/card/generic/ChannelControl.hpp"
+#include "keyple/card/generic/KeypleCardGenericExport.hpp"
 #include "keypop/card/spi/ApduRequestSpi.hpp"
 #include "keypop/reader/CardReader.hpp"
 #include "keypop/reader/selection/spi/SmartCard.hpp"
@@ -36,7 +37,8 @@ using keypop::reader::selection::spi::SmartCard;
  *
  * @since 2.0.0
  */
-class CardTransactionManagerAdapter final : public CardTransactionManager {
+class KEYPLECARDGENERIC_API CardTransactionManagerAdapter final
+: public CardTransactionManager {
 public:
     /**
      *
