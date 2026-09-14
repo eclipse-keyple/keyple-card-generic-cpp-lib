@@ -16,6 +16,7 @@
 #include <memory>
 #include <vector>
 
+#include "keyple/card/generic/KeypleCardGenericExport.hpp"
 #include "keypop/card/spi/ApduRequestSpi.hpp"
 #include "keypop/card/spi/CardRequestSpi.hpp"
 
@@ -32,7 +33,7 @@ using keypop::card::spi::CardRequestSpi;
  *
  * @since 2.0.0
  */
-class CardRequestAdapter final : public CardRequestSpi {
+class KEYPLECARDGENERIC_API CardRequestAdapter final : public CardRequestSpi {
 public:
     /**
      * Builds a card request with a list of {@link ApduRequestSpi } and the flag

@@ -17,6 +17,7 @@
 #include <string>
 #include <vector>
 
+#include "keyple/card/generic/KeypleCardGenericExport.hpp"
 #include "keypop/card/CardSelectionResponseApi.hpp"
 #include "keypop/card/spi/SmartCardSpi.hpp"
 #include "keypop/reader/selection/spi/IsoSmartCard.hpp"
@@ -35,7 +36,8 @@ using keypop::reader::selection::spi::IsoSmartCard;
  *
  * @since 2.0.0
  */
-class GenericCardAdapter final : public IsoSmartCard, public SmartCardSpi {
+class KEYPLECARDGENERIC_API GenericCardAdapter final : public IsoSmartCard,
+                                                       public SmartCardSpi {
 public:
     /**
      * Constructor

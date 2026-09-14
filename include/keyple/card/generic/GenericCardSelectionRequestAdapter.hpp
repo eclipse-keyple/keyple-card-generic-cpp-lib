@@ -17,6 +17,7 @@
 #include <ostream>
 #include <vector>
 
+#include "keyple/card/generic/KeypleCardGenericExport.hpp"
 #include "keypop/card/spi/CardRequestSpi.hpp"
 #include "keypop/card/spi/CardSelectionRequestSpi.hpp"
 
@@ -32,7 +33,7 @@ using keypop::card::spi::CardSelectionRequestSpi;
  *
  * @since 2.0.0
  */
-class GenericCardSelectionRequestAdapter final
+class KEYPLECARDGENERIC_API GenericCardSelectionRequestAdapter final
 : public CardSelectionRequestSpi {
 public:
     /**
