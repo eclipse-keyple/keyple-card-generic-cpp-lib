@@ -16,6 +16,7 @@ SET(LIBRARY_NAME keyplecardgenericcpplib)
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKEYPLECARDGENERIC_EXPORT")
 
 INCLUDE("CMakeLists.txt.keypop-card")
+INCLUDE("CMakeLists.txt.keypop-genericcard")
 INCLUDE("CMakeLists.txt.keyple-service-resource")
 INCLUDE("CMakeLists.txt.keyple-util")
 
@@ -29,6 +30,7 @@ ADD_LIBRARY(
     ${CMAKE_CURRENT_SOURCE_DIR}/CardRequestAdapter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CardTransactionManagerAdapter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GenericCardAdapter.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GenericCardApiFactoryAdapter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GenericCardSelectionExtensionAdapter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GenericCardResourceProfileExtensionAdapter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GenericCardSelectionRequestAdapter.cpp
@@ -51,6 +53,7 @@ TARGET_LINK_LIBRARIES(
     PUBLIC
 
     Keypop::Card
+    Keypop::GenericCard
     Keyple::Service::Resource
     Keyple::Util
 )

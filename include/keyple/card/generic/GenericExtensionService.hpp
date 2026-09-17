@@ -16,25 +16,22 @@
 #include <memory>
 #include <string>
 
-#include "keyple/card/generic/CardTransactionManager.hpp"
-#include "keyple/card/generic/GenericCardSelectionExtension.hpp"
 #include "keyple/card/generic/KeypleCardGenericExport.hpp"
 #include "keyple/core/common/KeypleCardExtension.hpp"
 #include "keyple/core/service/resource/spi/CardResourceProfileExtension.hpp"
-#include "keypop/reader/CardReader.hpp"
+#include "keypop/genericcard/GenericCardApiFactory.hpp"
+#include "keypop/genericcard/GenericCardSelectionExtension.hpp"
 #include "keypop/reader/selection/IsoCardSelector.hpp"
-#include "keypop/reader/selection/spi/SmartCard.hpp"
 
 namespace keyple {
 namespace card {
 namespace generic {
 
-using keyple::card::generic::GenericCardSelectionExtension;
 using keyple::core::common::KeypleCardExtension;
 using keyple::core::service::resource::spi::CardResourceProfileExtension;
-using keypop::reader::CardReader;
+using keypop::genericcard::GenericCardApiFactory;
+using keypop::genericcard::GenericCardSelectionExtension;
 using keypop::reader::selection::IsoCardSelector;
-using keypop::reader::selection::spi::SmartCard;
 
 /**
  * Card extension service providing basic access to APDU exchange functions with
@@ -53,24 +50,12 @@ public:
     static std::shared_ptr<GenericExtensionService> getInstance();
 
     /**
-     * Creates an instance of CardSelectionExtension.
+     * Returns an instance of GenericCardApiFactory.
      *
      * @return A not null reference.
-     * @since 2.0.0
+     * @since 4.0.0
      */
-    std::shared_ptr<GenericCardSelectionExtension>
-    createGenericCardSelectionExtension();
-
-    /**
-     * Creates an instance of CardTransactionManager.
-     *
-     * @param reader The reader through which the card communicates.
-     * @param card The initial card data provided by the selection process.
-     * @return A not null reference.
-     * @since 2.0.0
-     */
-    std::shared_ptr<CardTransactionManager> createCardTransaction(
-        std::shared_ptr<CardReader> reader, std::shared_ptr<SmartCard> card);
+    std::shared_ptr<GenericCardApiFactory> getGenericCardApiFactory();
 
     /**
      * Creates an instance of CardResourceProfileExtension to be provided to the
